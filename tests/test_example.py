@@ -2,7 +2,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
-from models.db_models import User
+
+
+
+
+from ..models.db_models import User
 
 
 # Prueba para validar que no se permite registrar usuarios con correos duplicados
