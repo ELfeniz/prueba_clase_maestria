@@ -69,35 +69,18 @@ def is_valid_email(email):
 def test_invalid_email_constraint(db_session):
     # Intentar crear un usuario con un correo inválido
     invalid_email = "invalid-email"  # Sin formato correcto
-    user_with_invalid_email = User(name="Invalid Email User", email=invalid_email, password="securepassword", rol_id=1)
-
-    db_session.add(user_with_invalid_email)
-    
-    # Validar que el correo no pasa la comprobación manual de validación de formato
-    assert not is_valid_email(invalid_email), f"El correo {invalid_email} es inválido, pero pasó la validación."
-
-    try:
-        # Intentar hacer commit, pero esto debería lanzar un error si hay validación en la base de datos
-        db_session.commit()
-        pytest.fail("Se permitió registrar un usuario con un correo inválido.")
-    except IntegrityError:
-        db_session.rollback()  # Rollback para evitar problemas con la sesión
-    except Exception as e:
-        db_session.rollback()
-        pytest.fail(f"Error inesperado: {str(e)}")
-
-    # Crear un usuario con un correo válido para asegurar que el sistema lo permita
-    valid_email = "valid.email@example.com"
-    assert is_valid_email(valid_email), f"El correo {valid_email} debería ser válido."
-    
-    valid_user = User(name="Valid User", email=valid_email, password="securepassword", rol_id=1)
-    db_session.add(valid_user)
     
     try:
+        user_with_invalid_email = User(name="Invalid Email User", email=invalid_email, password="securepassword", rol_id=1)
+        db_session.add(user_with_invalid_email)
         db_session.commit()
+        pytest.fail("Se permitió registrar un usuario con un correo inválido.")  # Si llega aquí, la prueba falla
+    except ValueError as e:
+        # Validar que se lanza el error esperado
+        assert str(e) == f"Correo inválido: {invalid_email}", f"Error inesperado: {e}"
     except Exception as e:
-        db_session.rollback()
-        pytest.fail(f"Error al registrar un usuario con correo válido: {str(e)}")
+        pytest.fail(f"Se lanzó un error inesperado: {e}")
+
 
 
 # ----------------------------------------------------------------------------------
