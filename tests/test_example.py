@@ -6,7 +6,11 @@ from sqlalchemy.exc import IntegrityError
 
 
 
-from ..models.db_models import User
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from models.db_models import User
+
 
 
 # Prueba para validar que no se permite registrar usuarios con correos duplicados
