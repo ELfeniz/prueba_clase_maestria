@@ -20,7 +20,7 @@ from models.db_models import User, Base, Task
 @pytest.fixture(scope="function")
 def db_session():
     # Crear un motor SQLite en memoria
-    engine = create_engine("mysql+mysqlconnector://root:Daniel.99@localhost:3306/db_tareas")
+    engine = create_engine("sqlite:///:memory:")
     
     # Crear las tablas
     Base.metadata.create_all(engine)
@@ -57,7 +57,7 @@ def test_unique_email_constraint(db_session):
 @pytest.fixture(scope="function")
 def db_session():
     # Crear un motor SQLite en memoria
-    engine = create_engine("mysql+mysqlconnector://root:Daniel.99@localhost:3306/db_tareas")
+    engine = create_engine("sqlite:///:memory:")
     
     # Crear las tablas
     Base.metadata.create_all(engine)
