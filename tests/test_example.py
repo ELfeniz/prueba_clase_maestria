@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 
-from models.db_models import Base, User
+from ..models.db_models import Base, User
 
 # Configurar un motor SQLite en memoria para pruebas
 @pytest.fixture(scope="function")
