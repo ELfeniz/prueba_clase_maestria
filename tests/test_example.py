@@ -2,8 +2,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from models.db_models import Base, User
 
-from ..models.db_models import Base, User
+from models.db_models import Base, User
 
 # Configurar un motor SQLite en memoria para pruebas
 @pytest.fixture(scope="function")
