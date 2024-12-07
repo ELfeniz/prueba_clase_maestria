@@ -5,3 +5,5 @@ python-dotenv==1.0.1
 mysql-connector-python
 pandas==2.2.1
 psycopg2-binary
+pytest 
+flake8
