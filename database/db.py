@@ -11,7 +11,7 @@ This file the connection to the MySQL dataset using sqlalchemy with a local data
 load_dotenv('.env')
 
 # Obtener la URL de conexión desde la variable de entorno
-DATABASE_URL = "postgresql+psycopg2://admin:admin1234@postgres:5432/Tareas"
+DATABASE_URL = "postgresql+psycopg2://admin:admin1234%40nn@postgres:5433/Tareas"
 
 
 # Configuración de SQLAlchemy con PostgreSQL
