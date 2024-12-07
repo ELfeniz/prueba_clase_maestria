@@ -2,22 +2,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
-import os, sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.db_models import Base, User
+from models.db_models import User
 
-from models.db_models import Base, User
-
-# Configurar un motor SQLite en memoria para pruebas
-@pytest.fixture(scope="function")
-def db_session():
-    engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    yield session
-    session.close()
-    engine.dispose()
 
 # Prueba para validar que no se permite registrar usuarios con correos duplicados
 def test_unique_email_constraint(db_session):
