@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-
+import re
 from datetime import datetime
 
 
@@ -14,6 +14,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.db_models import User, Base
 from models.db_models import User, Base, Task
 
+
+# ----------------------------------------------------------------------------------
+### TEST 1
 
 
 # Configuración de la base de datos en memoria para pruebas
@@ -51,6 +54,54 @@ def test_unique_email_constraint(db_session):
     with pytest.raises(IntegrityError):
         db_session.commit()  # Esto debería lanzar una excepción debido a la restricción UNIQUE
 
+
+# ----------------------------------------------------------------------------------
+### TEST 2
+
+
+# Función auxiliar para validar correos electrónicos
+def is_valid_email(email):
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(regex, email) is not None
+
+
+# Prueba para comprobar que no se permita el registro con un correo inválido
+def test_invalid_email_constraint(db_session):
+    # Intentar crear un usuario con un correo inválido
+    invalid_email = "invalid-email"  # Sin formato correcto
+    user_with_invalid_email = User(name="Invalid Email User", email=invalid_email, password="securepassword", rol_id=1)
+
+    db_session.add(user_with_invalid_email)
+    
+    # Validar que el correo no pasa la comprobación manual de validación de formato
+    assert not is_valid_email(invalid_email), f"El correo {invalid_email} es inválido, pero pasó la validación."
+
+    try:
+        # Intentar hacer commit, pero esto debería lanzar un error si hay validación en la base de datos
+        db_session.commit()
+        pytest.fail("Se permitió registrar un usuario con un correo inválido.")
+    except IntegrityError:
+        db_session.rollback()  # Rollback para evitar problemas con la sesión
+    except Exception as e:
+        db_session.rollback()
+        pytest.fail(f"Error inesperado: {str(e)}")
+
+    # Crear un usuario con un correo válido para asegurar que el sistema lo permita
+    valid_email = "valid.email@example.com"
+    assert is_valid_email(valid_email), f"El correo {valid_email} debería ser válido."
+    
+    valid_user = User(name="Valid User", email=valid_email, password="securepassword", rol_id=1)
+    db_session.add(valid_user)
+    
+    try:
+        db_session.commit()
+    except Exception as e:
+        db_session.rollback()
+        pytest.fail(f"Error al registrar un usuario con correo válido: {str(e)}")
+
+
+# ----------------------------------------------------------------------------------
+### TEST 3
 
 
 # Configuración de la base de datos en memoria para pruebas
