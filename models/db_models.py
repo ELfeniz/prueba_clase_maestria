@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from database.db import Base
+from sqlalchemy.orm import validates
+import re
 
 """
 This file contains the structure of the outputs on the API response.
@@ -19,6 +21,12 @@ class User(Base):
     rol = relationship("Rol", back_populates="users")
     tasks = relationship("Task", back_populates="user")  # Fixed relationship name
 
+    @validates('email')
+    def validate_email(self, key, email):
+        regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(regex, email):
+            raise ValueError(f"Correo inválido: {email}")
+        return email
 
 class Rol(Base):
     __tablename__ = "roles"
